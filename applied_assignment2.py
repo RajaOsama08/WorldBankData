@@ -6,6 +6,7 @@ Created on Sun Dec 8 11:43:54 2022
 """
 
 import pandas as pd
+import matplotlib.pyplot as plt
 
 # list of countries (global variable)
 countries = ['Pakistan', 'India', 'New Zealand', 'China', 'United Kingdom']
@@ -49,7 +50,35 @@ def data_frame(data, indicator):
                                     'Country Name').reset_index()
     return df_countries, df_years, df_worldBank
 
+# Line plot
 
-# call data_frame function
-df = data_frame('climate_data.csv', 'SP.URB.TOTL')
-print(df)
+
+def line_plot(data, indicator_name, file_name):
+    # set figure size
+    plt.figure(dpi=144)
+
+    # filter years
+    data = data[(data['Years'] >= "1990") & (
+        data['Years'] <= "2020")]
+    data['Years'] = pd.to_numeric(data['Years'])
+    data.plot("Years", countries, title=indicator_name,
+              legend='leftbottom', linestyle="-.")
+    # setting lable on y axis
+    plt.ylabel('Data Growth')
+    plt.legend(loc='best', bbox_to_anchor=(1, 0.5))
+    plt.savefig(file_name, bbox_inches='tight')
+    return plt.show()
+
+
+# line chart 1
+# passing file name and indicator in data_frame function
+df_countries, df_years, df_data = data_frame('climate_data.csv', 'SP.URB.TOTL')
+# passing year data frame and Urban population in line_plot function
+line_plot(df_years, 'Urban population', 'line_urban.png')
+
+# line chart 2
+# passing file name and indicator in data_frame function
+df_countries, df_year, df_data = data_frame(
+    'climate_data.csv', 'AG.YLD.CREL.KG')
+# passing year data frame and Cereal yield in line_plot function
+line_plot(df_years, 'Cereal yield', 'line_creal.png')
