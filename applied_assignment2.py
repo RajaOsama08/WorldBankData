@@ -8,6 +8,7 @@ Created on Sun Dec 8 11:43:54 2022
 import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
 # list of countries (global variable)
 countries = ['Pakistan', 'India', 'New Zealand', 'China', 'United Kingdom']
@@ -97,6 +98,72 @@ def bar_chart(data, indicator_name, file_name):
     return plt.show()
 
 
+def heat_map(data, country):
+    data = data.drop(['Country Code', 'Indicator Name'], axis=1)
+    # create data frame
+    new_df = pd.DataFrame()
+
+    # get indicator data
+    Indicator_data = data[data["Indicator Code"] == "SP.URB.TOTL"]
+
+    # finding country data
+    Indicator_data = Indicator_data[Indicator_data['Country Name'] == country].drop(
+        ['Country Name', 'Indicator Code'], axis=1).T
+    # drop nan values and taking transpose
+    Indicator_data = Indicator_data.dropna().T
+    # urban population data
+    new_df["Urban population"] = Indicator_data.iloc[0]
+    #  cereal yield data
+    Indicator_data = data[data["Indicator Code"] == 'AG.YLD.CREL.KG']
+
+    Indicator_data = Indicator_data[Indicator_data['Country Name'] == country].drop(
+        ['Country Name', 'Indicator Code'], axis=1).T
+
+    Indicator_data = Indicator_data.dropna().T
+
+    new_df['Cereal yield (kg per hectare)'] = Indicator_data.iloc[0]
+
+    #  electricity form coal data
+    Indicator_data = data[data["Indicator Code"] == 'EG.ELC.COAL.ZS']
+
+    Indicator_data = Indicator_data[Indicator_data['Country Name'] == country].drop(
+        ['Country Name', 'Indicator Code'], axis=1).T
+
+    Indicator_data = Indicator_data.dropna().T
+
+    new_df['Electricity form coal'] = Indicator_data.iloc[0]
+
+    # CO2 emission data
+    Indicator_data = data[data["Indicator Code"] == 'EN.ATM.CO2E.KT']
+
+    Indicator_data = Indicator_data[Indicator_data['Country Name'] == country].drop(
+        ['Country Name', 'Indicator Code'], axis=1).T
+
+    Indicator_data = Indicator_data.dropna().T
+
+    new_df['CO2 emissions (kt)'] = Indicator_data.iloc[0]
+
+    ax = plt.axes()
+    # add title
+    ax.set_title(country)
+    # Create correlation matrix
+    corr_matrix = new_df.corr()
+    # plot heatmap
+    plt.figure(figsize=(10, 8))
+    sns.set(font_scale=1.2)
+    sns.heatmap(corr_matrix,
+                cmap='crest',
+                vmin=-1,
+                vmax=1,
+                center=0,
+                annot=True,
+                annot_kws=dict(size=14, weight='bold'),
+                linecolor='black',
+                linewidths=0.5,
+                ax=ax)
+    plt.show()
+
+
 # line chart 1
 # passing file name and indicator in data_frame function
 df_countries, df_years, df_data = data_frame('climate_data.csv', 'SP.URB.TOTL')
@@ -124,3 +191,10 @@ df_countries, df_years, df_data = data_frame(
     'climate_data.csv', 'EN.ATM.CO2E.KT')
 # CO2 emissions (kt)
 bar_chart(df_years, 'CO2 emissions (kt)', 'barplot_carbon.png')
+
+
+# passing file and country name
+heat_map(df_data, 'Pakistan')
+heat_map(df_data, 'United Kingdom')
+heat_map(df_data, 'China')
+heat_map(df_data, 'China')
