@@ -172,7 +172,7 @@ line_plot(df_years, 'Urban population', 'line_urban.png')
 
 # line chart 2
 # passing file name and indicator in data_frame function
-df_countries, df_year, df_data = data_frame(
+df_countries, df_years, df_data = data_frame(
     'climate_data.csv', 'AG.YLD.CREL.KG')
 # passing year data frame and Cereal yield in line_plot function
 line_plot(df_years, 'Cereal yield', 'line_creal.png')
