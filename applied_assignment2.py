@@ -7,6 +7,7 @@ Created on Sun Dec 8 11:43:54 2022
 
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
 # list of countries (global variable)
 countries = ['Pakistan', 'India', 'New Zealand', 'China', 'United Kingdom']
@@ -50,7 +51,7 @@ def data_frame(data, indicator):
                                     'Country Name').reset_index()
     return df_countries, df_years, df_worldBank
 
-# Line plot
+# Line plot accepts file, indicator, image name
 
 
 def line_plot(data, indicator_name, file_name):
@@ -70,6 +71,32 @@ def line_plot(data, indicator_name, file_name):
     return plt.show()
 
 
+# Bar chart accepts file, indicator, image name
+
+
+def bar_chart(data, indicator_name, file_name):
+    data = data.loc[data['Years'].isin(
+        ['1996', '1997', '1998', '1999', '2000', '2001', '2002', '2003', '2004', '2005'])]
+
+    num = np.arange(10)
+    width = 0.2
+    # Used (tolist) to convert array values to list
+    years = data['Years'].tolist()
+
+    plt.figure()
+    plt.title(indicator_name)
+    plt.bar(num+0.2, data['India'], width, label='India')
+    plt.bar(num-0.2, data['China'], width, label='China')
+    plt.bar(num, data['United Kingdom'], width, label='united Kingdom')
+
+    plt.xticks(num, years)  # This is for showing years in x asis
+    plt.xlabel('Years')
+    plt.ylabel('Total population')
+    plt.legend(loc='best', bbox_to_anchor=(1, 0.5))
+    plt.savefig(file_name, bbox_inches='tight')
+    return plt.show()
+
+
 # line chart 1
 # passing file name and indicator in data_frame function
 df_countries, df_years, df_data = data_frame('climate_data.csv', 'SP.URB.TOTL')
@@ -82,3 +109,18 @@ df_countries, df_year, df_data = data_frame(
     'climate_data.csv', 'AG.YLD.CREL.KG')
 # passing year data frame and Cereal yield in line_plot function
 line_plot(df_years, 'Cereal yield', 'line_creal.png')
+
+
+# bar chart
+# passing file name and indicator in data_frame function
+df_countries, df_years, df_data = data_frame(
+    'climate_data.csv', 'EG.ELC.COAL.ZS')
+# electricity form coal
+bar_chart(df_years, 'Electricity production from coal sources (% of total)',
+          'barplot_coal.png')
+
+# passing file name and indicator in data_frame function
+df_countries, df_years, df_data = data_frame(
+    'climate_data.csv', 'EN.ATM.CO2E.KT')
+# CO2 emissions (kt)
+bar_chart(df_years, 'CO2 emissions (kt)', 'barplot_carbon.png')
