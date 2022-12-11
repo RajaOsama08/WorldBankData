@@ -196,7 +196,7 @@ def heat_map(data, country, image_name):
                 linewidths=0.5,
                 ax=ax)
     # take constant file name. second argumend is used to remove extra spaces in image
-    plt.savefig(image_name, bbox_inches='tight')
+    plt.savefig(image_name)
     return plt.show()
 
 
