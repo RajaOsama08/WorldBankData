@@ -55,14 +55,15 @@ def data_frame(data, indicator):
 # Line plot accepts file, indicator, image name
 
 
-def line_plot(data, indicator_name, image_name):
+def line_plot(data, indicator_name, y_axis, image_name):
     """
     Produces a line plot.
     data: list of data values
     incdicator: a constant value contain name of indicator
+    y_axis: a constant value for y-axis label
     image_name: name of plot image
 
-    this function is used to take three arguments. first filter the data on based on countries name
+    this function takes three arguments. first filter the data on based on countries name
     then match the data with a constant variable named indicator. When data is match further we plot
     the data. Also, save the plot image before return
     """
@@ -75,8 +76,9 @@ def line_plot(data, indicator_name, image_name):
     data['Years'] = pd.to_numeric(data['Years'])
     data.plot("Years", countries, title=indicator_name,
               legend='leftbottom', linestyle="-.")
-    # setting lable on y axis
-    plt.ylabel('Data Growth')
+    # lable on y axis
+    plt.ylabel(y_axis)
+    # set legend according to best position automatically
     plt.legend(loc='best', bbox_to_anchor=(1, 0.5))
     # take constant file name. second argumend is used to remove extra spaces in image
     plt.savefig(image_name, bbox_inches='tight')
@@ -94,7 +96,7 @@ def bar_chart(data, indicator_name, y_label, image_name):
     y_label: a constant value contain name of label
     file_name: name of plot image
 
-    this function is used to take four arguments. first filter the data on based on countries name
+    this function takes four arguments. first filter the data on based on countries name
     then match the data with a constant variable named indicator.Third argument is a constant
     name of label y-axis. In last, when data is match further we plot the bar chat of data.
     Also, save the plot image before return
@@ -113,9 +115,11 @@ def bar_chart(data, indicator_name, y_label, image_name):
     plt.bar(num-0.2, data['China'], width, label='China')
     plt.bar(num, data['United Kingdom'], width, label='united Kingdom')
 
-    plt.xticks(num, years)  # This is for showing years in x asis
+    # show years in x-asis
+    plt.xticks(num, years)
     plt.xlabel('Years')
     plt.ylabel(y_label)
+    # set legend according to best position automatically
     plt.legend(loc='best', bbox_to_anchor=(1, 0.5))
     # take constant file name. second argumend is used to remove extra spaces in image
     plt.savefig(image_name, bbox_inches='tight')
@@ -129,7 +133,7 @@ def heat_map(data, country, image_name):
     country: a constant variable contain country name
     file_name: name of plot image
 
-    this function is used to take three arguments. first filter the data on based on indicators
+    this function takes three arguments. first filter the data on based on indicators
     then match the data with a constant variable of countries.Third argument is a constant
     name of heat map image. After ploting the heat map correlation matrix. In last, we save the
     heat map image before return
@@ -177,6 +181,15 @@ def heat_map(data, country, image_name):
     Indicator_data = Indicator_data.dropna().T
     new_df['CO2 emissions (kt)'] = Indicator_data.iloc[0]
 
+    # Foreign direct investment, net inflows (% of GDP)
+    Indicator_data = data[data["Indicator Code"] == 'BX.KLT.DINV.WD.GD.ZS']
+
+    Indicator_data = Indicator_data[Indicator_data['Country Name'] == country].drop(
+        ['Country Name', 'Indicator Code'], axis=1).T
+
+    Indicator_data = Indicator_data.dropna().T
+    new_df['Foreign direct investment, net inflows (% of GDP)'] = Indicator_data.iloc[0]
+
     ax = plt.axes()
     # add title
     ax.set_title(country)
@@ -184,34 +197,45 @@ def heat_map(data, country, image_name):
     corr_matrix = new_df.corr()
     # plot heatmap
     plt.figure(figsize=(10, 8))
-    sns.set(font_scale=1.2)
+    sns.set(font_scale=0.9)
     sns.heatmap(corr_matrix,
                 cmap='crest',
                 vmin=-1,
                 vmax=1,
                 center=0,
                 annot=True,
-                annot_kws=dict(size=14, weight='bold'),
+                annot_kws=dict(size=12, weight='bold'),
                 linecolor='black',
                 linewidths=0.5,
                 ax=ax)
-    # take constant file name. second argumend is used to remove extra spaces in image
-    plt.savefig(image_name)
     return plt.show()
+
+
+def stat_analysis(df_years):
+
+    df_years = df_years.loc[df_years['Years'].isin(['2020'])]
+
+    # Statatical function return the mean of the co2 emission of the country.
+    df_years = df_years[['Pakistan', 'India',
+                         'New Zealand', 'China', 'United Kingdom']].mean()
+    print(df_years)
+
+    # converting the data to csv file
+    # df2 = df2.to_csv("mean.csv")
 
 
 # line chart 1
 # passing file name and indicator in data_frame function
 df_countries, df_years, df_data = data_frame('climate_data.csv', 'SP.URB.TOTL')
 # passing year data frame and Urban population in line_plot function
-line_plot(df_years, 'Urban population', 'line_urban.png')
+line_plot(df_years, 'Urban population', 'Population Growth', 'line_urban.png')
 
 # line chart 2
 # passing file name and indicator in data_frame function
 df_countries, df_years, df_data = data_frame(
     'climate_data.csv', 'AG.YLD.CREL.KG')
 # passing year data frame and Cereal yield in line_plot function
-line_plot(df_years, 'Cereal yield', 'line_creal.png')
+line_plot(df_years, 'Cereal yield', 'Cereal Growth', 'line_creal.png')
 
 
 # bar chart
@@ -234,3 +258,9 @@ bar_chart(df_years, 'CO2 emissions (kt)',
 heat_map(df_data, 'Pakistan', 'heatmap_pak.png')
 heat_map(df_data, 'United Kingdom', 'heatmap_uk.png')
 heat_map(df_data, 'New Zealand', 'heatmap_nz.png')
+
+
+# passing file name and indicator in data_frame function
+df_countries, df_years, df_data = data_frame('climate_data.csv', 'SP.URB.TOTL')
+print(df_years)
+stat_analysis(df_years)
