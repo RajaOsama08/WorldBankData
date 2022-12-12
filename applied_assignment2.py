@@ -220,9 +220,6 @@ def stat_analysis(df_years):
                          'New Zealand', 'China', 'United Kingdom']].mean()
     print(df_years)
 
-    # converting the data to csv file
-    # df2 = df2.to_csv("mean.csv")
-
 
 # line chart 1
 # passing file name and indicator in data_frame function
