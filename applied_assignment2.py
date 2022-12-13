@@ -40,7 +40,8 @@ def data_frame(data, indicator):
     df_countries = df_worldBank.loc[df_worldBank['Indicator Code'].eq(
         indicator)]
 
-    # .melt is a another type of transpose in this all column remain same.
+    # .melt is a another type of transpose in this all column remain same
+    # we just give the name of column name we want to take transpose.
     # Below Just change Years into rows
     df_years = df_countries.melt(id_vars=['Country Name', 'Country Code',
                                           'Indicator Name', 'Indicator Code'],
